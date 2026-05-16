@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<courses institute="Greenfield Institute" exported="2025-05-16T00:00:00+00:00">
+  <course id="1">
+    <title>Environmental Biology</title>
+    <code>SCI-101</code>
+    <department>Science</department>
+    <instructor>Dr. Amara Nkosi</instructor>
+    <credits>3</credits>
+    <capacity>25</capacity>
+    <enrolled>0</enrolled>
+    <description>Foundations of ecology, biodiversity, and environmental systems.</description>
+    <created_at>2025-01-15 09:00:00</created_at>
+  </course>
+  <course id="2">
+    <title>Web Development I</title>
+    <code>TEC-201</code>
+    <department>Technology</department>
+    <instructor>Dr. Lena Kimura</instructor>
+    <credits>4</credits>
+    <capacity>30</capacity>
+    <enrolled>0</enrolled>
+    <description>HTML, CSS, JavaScript, and responsive web design fundamentals.</description>
+    <created_at>2025-01-15 09:00:00</created_at>
+  </course>
+  <course id="3">
+    <title>Applied Statistics</title>
+    <code>MAT-301</code>
+    <department>Mathematics</department>
+    <instructor>Prof. James Osei</instructor>
+    <credits>3</credits>
+    <capacity>25</capacity>
+    <enrolled>0</enrolled>
+    <description>Statistical methods for data analysis in academic and professional contexts.</description>
+    <created_at>2025-01-15 09:00:00</created_at>
+  </course>
+</courses>
