@@ -45,8 +45,11 @@ if ($check->fetch()) {
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
 $insert = $pdo->prepare("
-    INSERT INTO users (first_name, last_name, email, student_id, password_hash, role, created_at)
-    VALUES (?, ?, ?, ?, ?, 'student', NOW())
+    INSERT INTO users (
+        first_name, last_name, email, student_id, password_hash, role,
+        must_change_password, fees_paid, created_at
+    )
+    VALUES (?, ?, ?, ?, ?, 'student', 0, 0.00, NOW())
 ");
 
 try {
@@ -59,8 +62,9 @@ try {
     $_SESSION['user_email']     = $email;
     $_SESSION['student_id']     = strtoupper($student_id);
     $_SESSION['user_role']      = 'student';
+    $_SESSION['must_change_password'] = false;
 
-    echo json_encode(['success' => true, 'redirect' => '/greenfield/student/dashboard.php']);
+    echo json_encode(['success' => true, 'redirect' => '/greenfield/student/dashboard.html']);
 
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Registration failed. Please try again.']);

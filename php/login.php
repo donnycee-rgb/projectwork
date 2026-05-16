@@ -23,7 +23,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 $stmt = $pdo->prepare(
-    'SELECT id, first_name, last_name, email, student_id, password_hash, role
+    'SELECT id, first_name, last_name, email, student_id, password_hash, role, must_change_password
      FROM users WHERE email = ? LIMIT 1'
 );
 $stmt->execute([$email]);
@@ -40,10 +40,15 @@ $_SESSION['user_full_name'] = trim($user['first_name'] . ' ' . $user['last_name'
 $_SESSION['user_email']     = $user['email'];
 $_SESSION['student_id']     = $user['student_id'];
 $_SESSION['user_role']      = $user['role'];
+$mustChange                 = (int) $user['must_change_password'] === 1;
+$_SESSION['must_change_password'] = $mustChange;
 
-$redirect = $user['role'] === 'admin'
-    ? '/greenfield/admin/dashboard.html'
-    : '/greenfield/student/dashboard.php';
+$redirect = '/greenfield/change-password.html';
+if (!$mustChange) {
+    $redirect = $user['role'] === 'admin'
+        ? '/greenfield/admin/dashboard.html'
+        : '/greenfield/student/dashboard.html';
+}
 
 echo json_encode([
     'success'  => true,
@@ -52,5 +57,6 @@ echo json_encode([
         'name'  => trim($user['first_name'] . ' ' . $user['last_name']),
         'role'  => $user['role'],
         'email' => $user['email'],
+        'must_change_password' => $mustChange,
     ],
 ]);
