@@ -119,7 +119,7 @@ if ($method === 'GET') {
              INNER JOIN users u ON u.id = r.user_id
              INNER JOIN courses c ON c.id = r.course_id
              ORDER BY r.registered_at DESC
-             LIMIT 10'
+             LIMIT 5'
         );
         echo json_encode(['success' => true, 'registrations' => $stmt->fetchAll()]);
         exit;

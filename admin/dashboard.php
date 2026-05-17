@@ -331,39 +331,45 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
             </article>
           </div>
 
+          <!-- ROW 1: Registration Trends + Donut -->
           <div class="dashboard-grid dashboard-grid-main" data-scroll-reveal>
             <section class="panel panel-hover">
-              <div class="panel-head">
-                <h3>Courses Overview</h3>
-                <div class="panel-tabs" id="courseOverviewTabs">
-                  <button type="button" class="active" data-filter="all">All</button>
-                  <button type="button" data-filter="active">Active</button>
-                  <button type="button" data-filter="inactive">Inactive</button>
-                </div>
-              </div>
-              <div class="capacity-table-head">
-                <span>Course Name</span>
-                <span>Department</span>
-                <span>Credits</span>
-                <span>Enrolled/Capacity</span>
-                <span>Status</span>
-              </div>
-              <div class="capacity-list capacity-table-list" id="capacityList">
-                <p class="table-empty">Loading courses...</p>
-              </div>
-            </section>
-
-            <section class="panel panel-hover">
-              <div class="panel-head"><h3>Registration Trends</h3></div>
+              <div class="panel-head"><h3>Registration Trends</h3><span class="panel-sub">Last 6 months</span></div>
               <div class="chart-wrap">
                 <canvas id="adminRegTrendChart"></canvas>
               </div>
             </section>
+            <section class="panel panel-hover">
+              <div class="panel-head"><h3>Enrollment by Department</h3></div>
+              <div class="chart-wrap chart-wrap-donut">
+                <canvas id="adminDeptDonutChart"></canvas>
+              </div>
+            </section>
           </div>
 
-          <div class="dashboard-grid dashboard-grid-bottom" data-scroll-reveal>
+          <!-- ROW 2: Bar chart + Capacity Pie -->
+          <div class="dashboard-grid dashboard-grid-main" data-scroll-reveal>
             <section class="panel panel-hover">
-              <div class="panel-head"><h3>Recent Registrations</h3></div>
+              <div class="panel-head"><h3>Enrollments per Course</h3><span class="panel-sub">Top courses by student count</span></div>
+              <div class="chart-wrap chart-wrap-bar">
+                <canvas id="adminCourseBarChart"></canvas>
+              </div>
+            </section>
+            <section class="panel panel-hover">
+              <div class="panel-head"><h3>Capacity Utilisation</h3><span class="panel-sub">Enrolled vs available seats</span></div>
+              <div class="chart-wrap chart-wrap-donut">
+                <canvas id="adminCapacityPieChart"></canvas>
+              </div>
+            </section>
+          </div>
+
+          <!-- ROW 3: Recent Registrations capped at 5 -->
+          <div data-scroll-reveal>
+            <section class="panel panel-hover">
+              <div class="panel-head">
+                <h3>Recent Registrations</h3>
+                <span class="panel-sub">Last 5 enrolments</span>
+              </div>
               <table class="data-table">
                 <thead>
                   <tr>
@@ -378,14 +384,9 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
                 </tbody>
               </table>
             </section>
-
-            <section class="panel panel-hover">
-              <div class="panel-head"><h3>Enrollment by Department</h3></div>
-              <div class="chart-wrap chart-wrap-donut">
-                <canvas id="adminDeptDonutChart"></canvas>
-              </div>
-            </section>
           </div>
+          <!-- hidden: keeps existing JS that targets capacityList from erroring -->
+          <div id="capacityList" style="display:none"></div>
 
           <section class="panel panel-hover" data-scroll-reveal>
             <div class="panel-head"><h3>Post Announcement</h3></div>
@@ -898,6 +899,8 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
   (function () {
     let adminRegChart = null;
     let adminDeptChart = null;
+    let adminBarChart = null;
+    let adminPieChart = null;
     let courseCache = [];
     let activeCourseFilter = 'all';
 
@@ -965,6 +968,13 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
         if (!data.success) return;
         courseCache = data.courses || [];
         renderCourseOverview();
+        // Feed bar + pie charts with real data
+        const sorted = [...courseCache].sort((a, b) => (b.enrolled || 0) - (a.enrolled || 0)).slice(0, 8);
+        window._adminBarLabels = sorted.map((c) => c.title.length > 18 ? c.title.slice(0, 18) + '...' : c.title);
+        window._adminBarData   = sorted.map((c) => parseInt(c.enrolled || 0, 10));
+        window._adminTotalEnrolled = courseCache.reduce((s, c) => s + parseInt(c.enrolled || 0, 10), 0);
+        window._adminTotalSeats    = courseCache.reduce((s, c) => s + parseInt(c.capacity || 0, 10), 0);
+        initOverviewCharts();
       } catch {}
     }
 
@@ -1052,6 +1062,75 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
               legend: {
                 position: 'right',
                 labels: { boxWidth: 12, color: '#4e5e52', font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+
+      // Bar chart: Enrollments per Course (populated from courses data)
+      const barCanvas = document.getElementById('adminCourseBarChart');
+      if (barCanvas) {
+        const ctx = barCanvas.getContext('2d');
+        if (adminBarChart) adminBarChart.destroy();
+        adminBarChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: window._adminBarLabels || ['No data'],
+            datasets: [{
+              label: 'Students Enrolled',
+              data: window._adminBarData || [0],
+              backgroundColor: ['#1a2e1e','#2d4a32','#2d7a4e','#3a9e68','#4ecb71','#a8d5b5','#1a2e1e','#2d4a32'],
+              borderRadius: 6,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#4e5e52', maxRotation: 30, font: { size: 11 } } },
+              y: { beginAtZero: true, ticks: { color: '#4e5e52', precision: 0 }, grid: { color: 'rgba(45,122,78,.1)' } }
+            }
+          }
+        });
+      }
+
+      // Pie chart: Capacity Utilisation (enrolled vs remaining seats)
+      const pieCanvas = document.getElementById('adminCapacityPieChart');
+      if (pieCanvas) {
+        const ctx = pieCanvas.getContext('2d');
+        if (adminPieChart) adminPieChart.destroy();
+        const enrolled = window._adminTotalEnrolled || 0;
+        const seats    = window._adminTotalSeats    || 1;
+        const remaining = Math.max(0, seats - enrolled);
+        adminPieChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Enrolled', 'Available Seats'],
+            datasets: [{
+              data: [enrolled, remaining],
+              backgroundColor: ['#2d7a4e', '#d4f0e0'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { boxWidth: 12, color: '#4e5e52', font: { size: 12 } }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (item) => {
+                    const total = item.dataset.data.reduce((a,b) => a+b, 0);
+                    const pct = total ? Math.round((item.raw / total) * 100) : 0;
+                    return item.label + ': ' + item.raw + ' (' + pct + '%)';
+                  }
+                }
               }
             }
           }

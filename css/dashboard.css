@@ -1552,3 +1552,72 @@ body.dash-body {
     gap: 0.35rem;
   }
 }
+
+/* ── New analytics chart styles ─────────────────────── */
+.chart-wrap-bar {
+  height: 340px;
+  padding: 0.9rem 1rem 1rem;
+}
+
+.panel-sub {
+  font-size: 0.75rem;
+  color: var(--text-mid);
+  font-weight: 400;
+  margin-left: 0.5rem;
+}
+
+/* ── Browse courses section ──────────────────────────── */
+.browse-search-bar {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 0.5rem;
+  flex-wrap: wrap;
+}
+
+.browse-search-bar input,
+.browse-search-bar select {
+  padding: 0.5rem 0.85rem;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.browse-search-bar input { flex: 1; min-width: 200px; }
+.browse-search-bar input:focus,
+.browse-search-bar select:focus { border-color: var(--accent); }
+
+/* ── Profile view grid ───────────────────────────────── */
+.profile-view-grid { padding: 1.25rem; }
+.pv-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.pv-row:last-child { border-bottom: none; }
+.pv-label { color: var(--text-mid); }
+.pv-value { font-weight: 600; color: var(--text); }
+.pv-photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1.25rem 0.75rem;
+  gap: 0.5rem;
+}
+.pv-photo-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--accent-br);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif, serif);
+  font-size: 1.6rem; font-weight: 700;
+}
+.pv-photo-hint { font-size: 0.75rem; color: var(--text-mid); }

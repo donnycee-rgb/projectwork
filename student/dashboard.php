@@ -41,9 +41,17 @@ $initials  = strtoupper(substr($parts[0] ?? 'S', 0, 1) . substr($parts[1] ?? '',
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h14M3 10h14M3 15h9" stroke-linecap="round"/></svg>
           My Courses
         </a>
+        <a href="#section-browse" data-section="section-browse">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="5"/><path d="M14 14l3 3" stroke-linecap="round"/></svg>
+          Browse Courses
+        </a>
         <a href="#section-fees" data-section="section-fees">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="16" height="12" rx="2"/><path d="M2 9h16M5 13h2" stroke-linecap="round"/></svg>
           My Fees
+        </a>
+        <a href="#section-profile" data-section="section-profile">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="7" r="3"/><path d="M4 17c0-3 2.5-5 6-5s6 2 6 5" stroke-linecap="round"/></svg>
+          My Profile
         </a>
       </nav>
       <div class="sidebar-footer">
@@ -208,6 +216,48 @@ $initials  = strtoupper(substr($parts[0] ?? 'S', 0, 1) . substr($parts[1] ?? '',
                 <tr><td colspan="3" class="table-empty">Loading...</td></tr>
               </tbody>
             </table>
+          </section>
+        </section>
+
+        <section id="section-browse" class="dash-section">
+          <div class="section-head">
+            <h2>Browse Courses</h2>
+            <p>Find and enroll in available courses.</p>
+          </div>
+          <section class="panel panel-hover">
+            <div class="browse-search-bar">
+              <input type="search" id="courseSearch" placeholder="Search title, department, instructor..."/>
+              <select id="deptFilter"><option value="">All departments</option></select>
+            </div>
+            <div class="course-cards-grid" id="courseCardsGrid">
+              <p class="no-results-msg">Loading courses...</p>
+            </div>
+          </section>
+        </section>
+
+        <section id="section-profile" class="dash-section">
+          <div class="section-head">
+            <h2>My Profile</h2>
+            <p>Your Greenfield account details.</p>
+          </div>
+          <section class="panel panel-hover">
+            <div class="pv-photo-section">
+              <label for="photoUploadProfile" style="cursor:pointer">
+                <div class="pv-photo-avatar" id="pvAvatar"><?= $initials ?></div>
+              </label>
+              <input type="file" id="photoUploadProfile" accept="image/jpeg,image/png,image/webp" style="display:none"/>
+              <p class="pv-photo-hint">Click to upload a profile photo</p>
+            </div>
+            <div class="profile-view-grid">
+              <div class="pv-row"><span class="pv-label">Full Name</span><span class="pv-value"><?= $fullName ?></span></div>
+              <div class="pv-row"><span class="pv-label">Student ID</span><span class="pv-value"><?= $studentId ?></span></div>
+              <div class="pv-row"><span class="pv-label">Email</span><span class="pv-value"><?= $email ?></span></div>
+              <div class="pv-row"><span class="pv-label">Role</span><span class="pv-value">Student</span></div>
+              <div class="pv-row">
+                <span class="pv-label">Password</span>
+                <a href="../change-password.html" style="font-size:0.8rem;color:var(--accent);font-weight:600;text-decoration:none;">Change password</a>
+              </div>
+            </div>
           </section>
         </section>
 
