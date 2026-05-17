@@ -1,14 +1,15 @@
 <?php
-// config/db.php
-// Place this file at: config/db.php  (one level above your php/ folder)
-
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'greenfield_db');
-define('DB_USER', 'root');       // change to your MySQL username
-define('DB_PASS', '');           // change to your MySQL password
+define('DB_HOST',    '127.0.0.1');
+define('DB_PORT',    3306);
+define('DB_NAME',    'greenfield_db');
+define('DB_USER',    'root');
+define('DB_PASS',    '');
 define('DB_CHARSET', 'utf8mb4');
 
-$dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+$dsn = sprintf(
+    'mysql:host=%s;port=%d;dbname=%s;charset=%s',
+    DB_HOST, DB_PORT, DB_NAME, DB_CHARSET
+);
 
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -20,6 +21,9 @@ try {
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Database connection failed.']);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database connection failed: ' . $e->getMessage()
+    ]);
     exit;
 }

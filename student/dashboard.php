@@ -835,7 +835,7 @@ $initials  = strtoupper(substr($parts[0] ?? 'S', 0, 1) . substr($parts[1] ?? '',
       form.append('photo', file);
       const res = await fetch(API + 'profile.php?action=upload', {method:'POST', body:form}).then(r => r.json()).catch(() => ({success:false}));
       if (res.success) {
-        const src = '../' + res.path;
+        const src = '../' + res.profile_photo;
         avatarIds.forEach(id => {
           const el = document.getElementById(id);
           if (!el) return;
