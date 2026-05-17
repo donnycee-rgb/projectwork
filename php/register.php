@@ -64,7 +64,7 @@ try {
     $_SESSION['user_role']      = 'student';
     $_SESSION['must_change_password'] = false;
 
-    echo json_encode(['success' => true, 'redirect' => '/greenfield/student/dashboard.html']);
+    echo json_encode(['success' => true, 'redirect' => 'student/dashboard.php']);
 
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Registration failed. Please try again.']);

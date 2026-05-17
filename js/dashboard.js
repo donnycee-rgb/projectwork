@@ -634,6 +634,314 @@
     if (elDept) elDept.textContent = summary.depts;
   }
 
+  function formatKes(amount) {
+    const n = parseFloat(amount);
+    if (Number.isNaN(n)) return '0';
+    return n.toLocaleString('en-KE', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  }
+
+  async function loadStudentsSection() {
+    showSectionError('studentsError', '');
+    const tbody = document.getElementById('adminStudentsBody');
+    if (!tbody) return;
+    try {
+      const res = await fetchRegistrations('students');
+      if (!res.success) {
+        showSectionError('studentsError', res.message || 'Failed to load students.');
+        return;
+      }
+      const rows = res.students || [];
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="table-empty">No students registered yet.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows
+        .map(
+          (s) =>
+            '<tr><td>' +
+            escapeHtml((s.first_name || '') + ' ' + (s.last_name || '')) +
+            '</td><td>' +
+            escapeHtml(s.email) +
+            '</td><td>' +
+            escapeHtml(s.student_id) +
+            '</td><td>' +
+            (s.enrolled_count || 0) +
+            '</td><td>' +
+            formatKes(s.fees_paid) +
+            '</td><td>' +
+            formatDate(s.created_at) +
+            '</td></tr>'
+        )
+        .join('');
+    } catch {
+      showSectionError('studentsError', 'Could not load students.');
+    }
+  }
+
+  let feesStudentCache = {};
+
+  async function loadFeesSection() {
+    showSectionError('feesError', '');
+    const tbody = document.getElementById('feesTableBody');
+    const costInput = document.getElementById('costPerCredit');
+    if (!tbody) return;
+    try {
+      const res = await apiFetch('fees.php?action=all');
+      if (!res.success) {
+        showSectionError('feesError', res.message || 'Failed to load fees.');
+        return;
+      }
+      if (costInput && res.cost_per_credit) {
+        costInput.value = parseFloat(res.cost_per_credit);
+      }
+      const rows = res.students || [];
+      feesStudentCache = {};
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="table-empty">No students found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows
+        .map((s) => {
+          feesStudentCache[s.id] = s;
+          return (
+            '<tr data-id="' +
+            s.id +
+            '"><td>' +
+            escapeHtml(s.name) +
+            '</td><td>' +
+            escapeHtml(s.student_id) +
+            '</td><td>' +
+            formatKes(s.fees_paid) +
+            '</td><td>' +
+            (s.credits_available || 0) +
+            '</td><td>' +
+            (s.credits_used || 0) +
+            '</td><td>' +
+            (s.credits_remaining || 0) +
+            '</td><td><button type="button" class="btn-sm btn-outline btn-edit-fee" data-id="' +
+            s.id +
+            '">Update</button></td></tr>'
+          );
+        })
+        .join('');
+    } catch {
+      showSectionError('feesError', 'Could not load fee data.');
+    }
+  }
+
+  function openFeeModal(id, name, amount) {
+    const modal = document.getElementById('feeEditModal');
+    if (!modal) return;
+    document.getElementById('feeEditStudentId').value = id;
+    document.getElementById('feeEditStudentName').textContent = name;
+    document.getElementById('feeEditAmount').value = parseFloat(amount) || 0;
+    modal.hidden = false;
+  }
+
+  function closeFeeModal() {
+    const modal = document.getElementById('feeEditModal');
+    if (modal) modal.hidden = true;
+  }
+
+  function initFeesSection() {
+    const settingsForm = document.getElementById('feesSettingsForm');
+    const tbody = document.getElementById('feesTableBody');
+
+    settingsForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showSectionError('feesError', '');
+      const val = parseFloat(document.getElementById('costPerCredit')?.value);
+      try {
+        const data = await postJson('fees.php', { action: 'settings', cost_per_credit: val }, 'settings');
+        if (data.success) {
+          showToast(data.message || 'Setting saved.');
+          await loadFeesSection();
+        } else {
+          showSectionError('feesError', data.message || 'Could not save setting.');
+        }
+      } catch {
+        showSectionError('feesError', 'Connection error.');
+      }
+    });
+
+    document.getElementById('feeEditForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const studentId = parseInt(document.getElementById('feeEditStudentId')?.value, 10);
+      const amount = parseFloat(document.getElementById('feeEditAmount')?.value);
+      try {
+        const data = await postJson(
+          'fees.php',
+          { action: 'update', student_id: studentId, amount },
+          'update'
+        );
+        if (data.success) {
+          showToast(data.message || 'Fees updated.');
+          closeFeeModal();
+          await loadFeesSection();
+        } else {
+          showToast(data.message || 'Update failed.', true);
+        }
+      } catch {
+        showToast('Connection error.', true);
+      }
+    });
+
+    document.getElementById('feeEditCancel')?.addEventListener('click', closeFeeModal);
+    document.getElementById('feeEditBackdrop')?.addEventListener('click', closeFeeModal);
+
+    tbody?.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-edit-fee');
+      if (!btn) return;
+      const student = feesStudentCache[btn.dataset.id];
+      if (!student) return;
+      openFeeModal(student.id, student.name, student.fees_paid);
+    });
+  }
+
+  async function loadAdminsSection() {
+    showSectionError('adminsError', '');
+    const tbody = document.getElementById('adminsTableBody');
+    if (!tbody) return;
+    try {
+      const res = await apiFetch('admins.php?action=all');
+      if (!res.success) {
+        showSectionError('adminsError', res.message || 'Failed to load admins.');
+        return;
+      }
+      const rows = res.admins || [];
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="table-empty">No admin accounts.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows
+        .map(
+          (a) =>
+            '<tr><td>' +
+            escapeHtml(a.name) +
+            '</td><td>' +
+            escapeHtml(a.email) +
+            '</td><td>' +
+            formatDate(a.created_at) +
+            '</td><td>' +
+            escapeHtml(a.created_by) +
+            '</td><td>' +
+            '<button type="button" class="btn-sm btn-danger btn-delete-admin" data-id="' +
+            a.id +
+            '">Delete</button>' +
+            '</td></tr>'
+        )
+        .join('');
+    } catch {
+      showSectionError('adminsError', 'Could not load admin accounts.');
+    }
+  }
+
+  function initAdminsSection() {
+    const panel = document.getElementById('addAdminPanel');
+    const form = document.getElementById('addAdminForm');
+    const tbody = document.getElementById('adminsTableBody');
+
+    document.getElementById('btnAddAdmin')?.addEventListener('click', () => {
+      form?.reset();
+      panel?.classList.add('open');
+    });
+
+    document.getElementById('btnCancelAdmin')?.addEventListener('click', () => {
+      panel?.classList.remove('open');
+    });
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showSectionError('adminsError', '');
+      const fd = new FormData(form);
+      const body = {
+        action: 'create',
+        first_name: String(fd.get('first_name') || '').trim(),
+        last_name: String(fd.get('last_name') || '').trim(),
+        email: String(fd.get('email') || '').trim(),
+        password: String(fd.get('password') || ''),
+      };
+      try {
+        const data = await postJson('admins.php', body, 'create');
+        if (data.success) {
+          showToast(data.message || 'Admin created.');
+          panel?.classList.remove('open');
+          form.reset();
+          await loadAdminsSection();
+        } else {
+          showSectionError('adminsError', data.message || 'Could not create admin.');
+        }
+      } catch {
+        showSectionError('adminsError', 'Connection error.');
+      }
+    });
+
+    tbody?.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.btn-delete-admin');
+      if (!btn) return;
+      if (!confirm('Delete this admin account? This cannot be undone.')) return;
+      const id = parseInt(btn.dataset.id, 10);
+      try {
+        const data = await postJson('admins.php', { action: 'delete', id }, 'delete');
+        if (data.success) {
+          showToast(data.message || 'Admin deleted.');
+          await loadAdminsSection();
+        } else {
+          showToast(data.message || 'Delete failed.', true);
+        }
+      } catch {
+        showToast('Connection error.', true);
+      }
+    });
+  }
+
+  function initAdminSpa() {
+    const loaded = {
+      'section-overview': false,
+      'section-courses': false,
+      'section-students': false,
+      'section-registrations': false,
+      'section-fees': false,
+      'section-admins': false,
+    };
+
+    async function loadSection(sectionId) {
+      if (loaded[sectionId]) return;
+      loaded[sectionId] = true;
+      if (sectionId === 'section-overview') await initOverviewPage();
+      else if (sectionId === 'section-courses') {
+        initManageCoursesPage();
+      } else if (sectionId === 'section-students') await loadStudentsSection();
+      else if (sectionId === 'section-registrations') await initRegistrationsPage();
+      else if (sectionId === 'section-fees') await loadFeesSection();
+      else if (sectionId === 'section-admins') await loadAdminsSection();
+    }
+
+    initFeesSection();
+    initAdminsSection();
+
+    const links = document.querySelectorAll('.sidebar-nav a[data-section]');
+    const sections = document.querySelectorAll('.dash-section');
+
+    function go(sectionId) {
+      links.forEach((a) => a.classList.toggle('active', a.dataset.section === sectionId));
+      sections.forEach((s) => s.classList.toggle('active', s.id === sectionId));
+      history.replaceState(null, '', '#' + sectionId);
+      loadSection(sectionId);
+    }
+
+    links.forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        go(a.dataset.section);
+      });
+    });
+
+    const hash = location.hash.replace('#', '');
+    const initial = hash && document.getElementById(hash) ? hash : 'section-overview';
+    go(initial);
+  }
+
   async function initRegistrationsPage() {
     showSectionError('regsError', '');
     try {
@@ -838,6 +1146,11 @@
       if (adminPage === 'overview') initOverviewPage();
       else if (adminPage === 'courses') initManageCoursesPage();
       else if (adminPage === 'registrations') initRegistrationsPage();
+      return;
+    }
+
+    if (role === 'admin' && document.body.dataset.adminSpa === '1') {
+      initAdminSpa();
       return;
     }
 

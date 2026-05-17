@@ -43,11 +43,11 @@ $_SESSION['user_role']      = $user['role'];
 $mustChange                 = (int) $user['must_change_password'] === 1;
 $_SESSION['must_change_password'] = $mustChange;
 
-$redirect = '/greenfield/change-password.html';
+$redirect = 'change-password.html';
 if (!$mustChange) {
     $redirect = $user['role'] === 'admin'
-        ? '/greenfield/admin/dashboard.html'
-        : '/greenfield/student/dashboard.html';
+        ? 'admin/dashboard.php'
+        : 'student/dashboard.php';
 }
 
 echo json_encode([

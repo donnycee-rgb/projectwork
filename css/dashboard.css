@@ -57,8 +57,9 @@ a { color: inherit; }
 .sidebar-brand img {
   width: 150px;
   max-width: 100%;
-  filter: brightness(0) invert(1);
+  height: auto;
   display: block;
+  object-fit: contain;
 }
 
 .sidebar-role {
@@ -335,6 +336,48 @@ a { color: inherit; }
   width: 22px;
   height: 22px;
   color: var(--accent-br);
+}
+
+.admin-stats-editorial {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.admin-stats-editorial .stat-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.admin-stats-editorial .stat-compact {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: auto;
+  padding: 0.85rem 1rem;
+}
+
+.admin-stats-editorial .stat-compact .stat-icon {
+  margin-top: 0;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.admin-stats-editorial .stat-compact .stat-body {
+  flex: 1;
+}
+
+.admin-stats-editorial .stat-compact .stat-value {
+  font-size: 1.65rem;
+}
+
+@media (max-width: 900px) {
+  .admin-stats-editorial {
+    grid-template-columns: 1fr;
+  }
 }
 
 .overview-grid {
@@ -871,6 +914,35 @@ a { color: inherit; }
   font-size: 0.79rem;
   padding: 0.6rem 0.75rem;
   margin-bottom: 0.8rem;
+}
+
+.course-form-panel {
+  display: none;
+  padding: 1.35rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--off-white);
+}
+
+.course-form-panel.open {
+  display: block;
+}
+
+.course-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1rem;
+}
+
+.course-form .form-field.full {
+  grid-column: 1 / -1;
+}
+
+.course-form .form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 @media (max-width: 1180px) {

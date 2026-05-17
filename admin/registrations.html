@@ -2,105 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registrations &mdash; Greenfield Admin</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <meta http-equiv="refresh" content="0;url=dashboard.php#section-registrations"/>
+  <title>Redirecting…</title>
+  <script>location.replace('dashboard.php#section-registrations');</script>
 </head>
-<body class="dash-body" data-role="admin" data-admin-page="registrations">
-
-  <div class="dash-layout">
-    <aside class="dash-sidebar admin-sidebar">
-      <div class="sidebar-brand">
-        <a href="../index.html">
-          <img src="../images/logo.png" alt="Greenfield Institute"/>
-        </a>
-        <p class="sidebar-role">Administration</p>
-      </div>
-      <nav class="sidebar-nav">
-        <a href="dashboard.html">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="4" rx="1.5"/><rect x="11" y="9" width="7" height="9" rx="1.5"/><rect x="2" y="12" width="7" height="6" rx="1.5"/></svg>
-          Overview
-        </a>
-        <a href="manage-courses.html">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 5h14M3 10h14M3 15h9" stroke-linecap="round"/></svg>
-          Manage Courses
-        </a>
-        <a href="registrations.html" class="active">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="14" height="13" rx="2"/><path d="M7 4V2M13 4V2M3 9h14" stroke-linecap="round"/></svg>
-          Registrations
-        </a>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <span id="adminName">Admin</span>
-          <a href="../php/logout.php" class="sidebar-signout">Sign Out</a>
-        </div>
-      </div>
-    </aside>
-
-    <main class="dash-main">
-      <header class="dash-topbar">
-        <div class="page-topbar" style="width:100%;margin:0;padding:0;border:none">
-          <h1>Registrations</h1>
-          <p class="topbar-date" id="topbarDate"></p>
-        </div>
-      </header>
-
-      <div class="dash-content">
-        <div id="regsError" class="section-error" hidden></div>
-
-        <dl class="summary-strip">
-          <div>
-            <dt>Total Registrations</dt>
-            <dd id="sumTotal">0</dd>
-          </div>
-          <div>
-            <dt>Most Popular Course</dt>
-            <dd id="sumPopular">—</dd>
-          </div>
-          <div>
-            <dt>Departments Represented</dt>
-            <dd id="sumDepts">0</dd>
-          </div>
-        </dl>
-
-        <section class="panel">
-          <div class="export-strip">
-            <button type="button" class="btn-outline" id="btnExportXmlRegs">Export as XML</button>
-          </div>
-
-          <div class="filter-bar">
-            <input type="search" id="regSearch" placeholder="Search by student or course name..." aria-label="Search registrations"/>
-            <select id="regDeptFilter" aria-label="Filter by department">
-              <option value="">All departments</option>
-            </select>
-          </div>
-
-          <table class="data-table" id="regsTable">
-            <thead>
-              <tr>
-                <th class="sortable" data-sort="student">Student Name <span class="sort-arrow">↕</span></th>
-                <th class="sortable" data-sort="student_id">Student ID <span class="sort-arrow">↕</span></th>
-                <th class="sortable" data-sort="course">Course Title <span class="sort-arrow">↕</span></th>
-                <th class="sortable" data-sort="department">Department <span class="sort-arrow">↕</span></th>
-                <th class="sortable" data-sort="credits">Credits <span class="sort-arrow">↕</span></th>
-                <th class="sortable" data-sort="registered_at">Date Enrolled <span class="sort-arrow active">▼</span></th>
-              </tr>
-            </thead>
-            <tbody id="regsTableBody">
-              <tr><td colspan="6" class="table-empty">Loading...</td></tr>
-            </tbody>
-          </table>
-        </section>
-      </div>
-    </main>
-  </div>
-
-  <div id="dashToast" class="toast" role="status"></div>
-  <script src="../js/animations.js"></script>
-  <script src="../js/dashboard.js"></script>
+<body>
+  <p>Redirecting to <a href="dashboard.php#section-registrations">registrations</a>…</p>
 </body>
 </html>

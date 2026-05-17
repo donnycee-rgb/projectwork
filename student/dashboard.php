@@ -388,7 +388,7 @@ $initials  = strtoupper(substr($parts[0] ?? 'S', 0, 1) . substr($parts[1] ?? '',
     <aside class="dash-sidebar">
       <div class="sidebar-brand">
         <a href="../index.html">
-          <img src="../images/logo.png" alt="Greenfield Institute"/>
+          <img src="../images/logo.svg" alt="Greenfield Institute"/>
         </a>
         <p class="sidebar-role">Student Portal</p>
       </div>
