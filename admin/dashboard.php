@@ -257,6 +257,10 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="5" width="16" height="12" rx="2"/><path d="M2 9h16M5 13h2" stroke-linecap="round"/></svg>
           Student Fees
         </a>
+        <a href="#section-announcements" data-section="section-announcements">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 4h12v9H4z" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 17h4M10 13v4" stroke-linecap="round"/></svg>
+          Announcements
+        </a>
         <a href="#section-admins" data-section="section-admins">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.8 5.1 17.2l.9-5.5-4-3.9 5.5-.8L10 2z" stroke-linejoin="round"/></svg>
           Admin Accounts
@@ -626,6 +630,41 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
               </tbody>
             </table>
           </section>
+        </section>
+
+        <!-- ANNOUNCEMENTS MANAGEMENT -->
+        <section id="section-announcements" class="dash-section">
+          <div class="section-head">
+            <h2>Manage Announcements</h2>
+            <p>Post new announcements and manage existing ones visible to all students.</p>
+          </div>
+          <div class="dashboard-grid dashboard-grid-announce">
+            <section class="panel panel-hover">
+              <div class="panel-head"><h3>Post New Announcement</h3></div>
+              <form id="announcementFormFull" class="announce-form" style="padding:1.25rem">
+                <div class="form-field">
+                  <label for="announceTitleFull">Title</label>
+                  <input type="text" id="announceTitleFull" required maxlength="200" placeholder="e.g. Exam Timetable Released"/>
+                </div>
+                <div class="form-field">
+                  <label for="announceMessageFull">Message</label>
+                  <textarea id="announceMessageFull" required rows="5" placeholder="Write your announcement here..."></textarea>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn-primary">Post Announcement</button>
+                </div>
+              </form>
+            </section>
+            <section class="panel panel-hover">
+              <div class="panel-head">
+                <h3>All Announcements</h3>
+                <span class="panel-sub" id="announceCount"></span>
+              </div>
+              <div id="adminAnnouncementsList" class="announcement-list" style="padding:0.75rem 1rem">
+                <p class="table-empty">Loading...</p>
+              </div>
+            </section>
+          </div>
         </section>
 
       </main>
@@ -1171,10 +1210,112 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
       });
     }
 
+    // ── Announcements management ─────────────────────────────
+    async function loadAdminAnnouncements() {
+      const container = document.getElementById('adminAnnouncementsList');
+      const countEl   = document.getElementById('announceCount');
+      if (!container) return;
+      try {
+        const res  = await fetch('../php/announcements.php?action=list');
+        const data = await res.json();
+        if (!data.success || !data.announcements.length) {
+          container.innerHTML = '<p class="table-empty">No announcements yet. Post one on the left.</p>';
+          if (countEl) countEl.textContent = '0 posted';
+          return;
+        }
+        if (countEl) countEl.textContent = data.announcements.length + ' posted';
+        container.innerHTML = data.announcements.map((a) => {
+          const date = new Date(a.created_at).toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' });
+          return '<div class="announce-card" data-id="' + a.id + '">' +
+            '<div class="announce-card-head">' +
+              '<strong class="announce-title">' + esc(a.title) + '</strong>' +
+              '<div style="display:flex;align-items:center;gap:0.75rem">' +
+                '<span class="announce-meta">' + esc(a.admin_name) + ' &bull; ' + date + '</span>' +
+                '<button type="button" class="btn-del-announce" data-id="' + a.id + '" title="Delete">'+
+                  '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" width="14" height="14"><path d="M5 7h10l-1 9H6L5 7zM3 7h14M8 7V5h4v2" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+                '</button>' +
+              '</div>' +
+            '</div>' +
+            '<p class="announce-body">' + esc(a.message) + '</p>' +
+          '</div>';
+        }).join('');
+
+        container.querySelectorAll('.btn-del-announce').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            if (!confirm('Delete this announcement? Students will no longer see it.')) return;
+            btn.disabled = true;
+            try {
+              const r = await fetch('../php/announcements.php?action=delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: parseInt(btn.dataset.id, 10) })
+              });
+              const d = await r.json();
+              if (d.success) {
+                btn.closest('.announce-card').remove();
+                toast('Announcement deleted.');
+                const remaining = container.querySelectorAll('.announce-card').length;
+                if (countEl) countEl.textContent = remaining + ' posted';
+                if (!remaining) container.innerHTML = '<p class="table-empty">No announcements yet.</p>';
+              } else {
+                toast(d.message || 'Could not delete.', true);
+                btn.disabled = false;
+              }
+            } catch {
+              toast('Network error.', true);
+              btn.disabled = false;
+            }
+          });
+        });
+      } catch {
+        container.innerHTML = '<p class="table-empty">Could not load announcements.</p>';
+      }
+    }
+
+    function initFullAnnouncementForm() {
+      const form    = document.getElementById('announcementFormFull');
+      const titleEl = document.getElementById('announceTitleFull');
+      const msgEl   = document.getElementById('announceMessageFull');
+      if (!form) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title   = titleEl.value.trim();
+        const message = msgEl.value.trim();
+        if (!title || !message) return;
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) btn.disabled = true;
+        try {
+          const r = await fetch('../php/announcements.php?action=create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, message })
+          });
+          const d = await r.json();
+          if (d.success) {
+            toast('Announcement posted successfully.');
+            form.reset();
+            loadAdminAnnouncements();
+          } else {
+            toast(d.message || 'Could not post.', true);
+          }
+        } catch {
+          toast('Network error.', true);
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      });
+    }
+
+    // Watch for navigation to announcements section
+    document.querySelector('[data-section="section-announcements"]')?.addEventListener('click', () => {
+      setTimeout(loadAdminAnnouncements, 120);
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
       initOverviewTabs();
       initOverviewCharts();
       initAnnouncementPost();
+      initFullAnnouncementForm();
       loadCourseOverview();
       setTimeout(loadCourseOverview, 700);
 

@@ -561,9 +561,35 @@ $initials  = strtoupper(substr($parts[0] ?? 'S', 0, 1) . substr($parts[1] ?? '',
       }
     }
 
+    async function loadAnnouncements() {
+      const container = document.getElementById('studentAnnouncementsList');
+      if (!container) return;
+      try {
+        const res = await fetch(API + 'announcements.php?action=list');
+        const data = await res.json();
+        if (!data.success || !data.announcements.length) {
+          container.innerHTML = '<p class="table-empty">No announcements yet.</p>';
+          return;
+        }
+        container.innerHTML = data.announcements.map((a) => {
+          const date = new Date(a.created_at).toLocaleDateString('en-KE', { day:'numeric', month:'short', year:'numeric' });
+          return '<div class="announce-card">' +
+            '<div class="announce-card-head">' +
+              '<strong class="announce-title">' + esc(a.title) + '</strong>' +
+              '<span class="announce-meta">' + esc(a.admin_name) + ' &bull; ' + date + '</span>' +
+            '</div>' +
+            '<p class="announce-body">' + esc(a.message) + '</p>' +
+          '</div>';
+        }).join('');
+      } catch {
+        container.innerHTML = '<p class="table-empty">Could not load announcements.</p>';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initTabs();
       loadData();
+      loadAnnouncements();
     });
   })();
   </script>

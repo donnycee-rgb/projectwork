@@ -1,8 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
-require_once '../php/auth_guard.php';
-require_once '../config/db.php';
+require_once __DIR__ . '/auth_guard.php';
+require_once __DIR__ . '/db.php';
 
 function json_response(array $payload, int $status = 200): void
 {
@@ -86,6 +86,27 @@ if ($action === 'list') {
         json_response(['success' => true, 'announcements' => $rows]);
     } catch (Throwable $e) {
         json_response(['success' => false, 'message' => 'Could not load announcements.'], 500);
+    }
+}
+
+if ($action === 'delete') {
+    if ($method !== 'POST') {
+        json_response(['success' => false, 'message' => 'Method not allowed.'], 405);
+    }
+    if (($_SESSION['user_role'] ?? '') !== 'admin') {
+        json_response(['success' => false, 'message' => 'Access denied.'], 403);
+    }
+    $data = read_json_body();
+    $id = (int) ($data['id'] ?? 0);
+    if ($id < 1) {
+        json_response(['success' => false, 'message' => 'Invalid ID.'], 422);
+    }
+    try {
+        $stmt = $pdo->prepare('DELETE FROM announcements WHERE id = ?');
+        $stmt->execute([$id]);
+        json_response(['success' => true]);
+    } catch (Throwable $e) {
+        json_response(['success' => false, 'message' => 'Could not delete announcement.'], 500);
     }
 }
 
