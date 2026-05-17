@@ -269,9 +269,25 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
 
     <!-- ── MAIN ─────────────────────────────────────────────────── -->
     <div class="dash-main">
-      <header class="dash-topbar">
-        <p class="topbar-greeting">Signed in as <strong><?= $fullName ?></strong></p>
-        <p class="topbar-date" id="topbarDate"></p>
+      <header class="dash-topbar admin-topbar">
+        <div class="topbar-left">
+          <button type="button" class="icon-btn sidebar-toggle" aria-label="Toggle menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+          </button>
+          <h1 class="topbar-page-title">Dashboard</h1>
+        </div>
+        <div class="topbar-center">
+          <label class="topbar-search" aria-label="Search">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="9" r="6"/><path d="M13.5 13.5L18 18" stroke-linecap="round"/></svg>
+            <input type="search" placeholder="Search anything here..." aria-label="Search dashboard"/>
+          </label>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="icon-btn" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 17h5l-1.4-1.4a2 2 0 01-.6-1.4V10a6 6 0 10-12 0v4.2a2 2 0 01-.6 1.4L4 17h5"/><path d="M9.5 20a2.5 2.5 0 005 0" stroke-linecap="round"/></svg>
+          </button>
+          <div class="topbar-avatar" id="adminAvatar" title="<?= $fullName ?>"><?= strtoupper(substr($firstName, 0, 1)) ?></div>
+        </div>
       </header>
 
       <main class="dash-content">
@@ -279,82 +295,113 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
         <!-- OVERVIEW -->
         <section id="section-overview" class="dash-section active">
           <div class="section-head" data-scroll-reveal>
-            <h2>Overview</h2>
-            <p>Institute-wide metrics at a glance, <?= $firstName ?>.</p>
+            <h2>Dashboard Overview</h2>
+            <p>Institute-wide performance summary for <?= $firstName ?>.</p>
+          </div>
+          <div class="overview-tools" data-scroll-reveal>
+            <button type="button" class="btn-outline" id="btnExportXml">Export as XML</button>
+            <button type="button" class="btn-primary" id="btnAddCourseQuick">Add Course</button>
           </div>
           <div id="overviewError" class="section-error" hidden></div>
 
-          <div class="admin-stats-editorial" data-scroll-reveal>
-            <article class="stat-card featured">
-              <div class="stat-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5"/></svg>
-              </div>
+          <div class="stats-row admin-stats-row" data-scroll-reveal>
+            <article class="dash-stat-card card-1">
+              <svg class="stat-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5"/></svg>
               <p class="stat-label">Total Students</p>
               <p class="stat-value" id="statStudents" data-count="0">0</p>
+              <p class="stat-note">as of today</p>
             </article>
-            <div class="stat-stack">
-              <article class="stat-card stat-compact">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 5V3M16 5V3M4 11h16" stroke-linecap="round"/></svg>
-                </div>
-                <div class="stat-body">
-                  <p class="stat-label">Total Courses</p>
-                  <p class="stat-value" id="statCourses" data-count="0">0</p>
-                </div>
-              </article>
-              <article class="stat-card stat-compact">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M6 6h12v12H6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <div class="stat-body">
-                  <p class="stat-label">Registrations</p>
-                  <p class="stat-value" id="statRegs" data-count="0">0</p>
-                </div>
-              </article>
-              <article class="stat-card stat-compact">
-                <div class="stat-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M4 18V8l8-4 8 4v10"/><path d="M9 18v-6h6v6"/></svg>
-                </div>
-                <div class="stat-body">
-                  <p class="stat-label">Departments</p>
-                  <p class="stat-value" id="statDepts" data-count="0">0</p>
-                </div>
-              </article>
-            </div>
+            <article class="dash-stat-card card-2">
+              <svg class="stat-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 5V3M16 5V3M4 11h16" stroke-linecap="round"/></svg>
+              <p class="stat-label">Total Courses</p>
+              <p class="stat-value" id="statCourses" data-count="0">0</p>
+              <p class="stat-note">as of today</p>
+            </article>
+            <article class="dash-stat-card card-3">
+              <svg class="stat-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6h12v12H6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <p class="stat-label">Registrations</p>
+              <p class="stat-value" id="statRegs" data-count="0">0</p>
+              <p class="stat-note">as of today</p>
+            </article>
+            <article class="dash-stat-card card-4">
+              <svg class="stat-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 18V8l8-4 8 4v10"/><path d="M9 18v-6h6v6"/></svg>
+              <p class="stat-label">Departments</p>
+              <p class="stat-value" id="statDepts" data-count="0">0</p>
+              <p class="stat-note">as of today</p>
+            </article>
           </div>
 
-          <div class="panel" data-scroll-reveal>
-            <div class="panel-head">
-              <h3>Quick Actions</h3>
-              <div class="panel-actions">
-                <button type="button" class="btn-outline" id="btnExportXml">Export as XML</button>
-                <button type="button" class="btn-primary" id="btnAddCourseQuick">Add Course</button>
+          <div class="dashboard-grid dashboard-grid-main" data-scroll-reveal>
+            <section class="panel panel-hover">
+              <div class="panel-head">
+                <h3>Courses Overview</h3>
+                <div class="panel-tabs" id="courseOverviewTabs">
+                  <button type="button" class="active" data-filter="all">All</button>
+                  <button type="button" data-filter="active">Active</button>
+                  <button type="button" data-filter="inactive">Inactive</button>
+                </div>
               </div>
-            </div>
+              <div class="capacity-table-head">
+                <span>Course Name</span>
+                <span>Department</span>
+                <span>Credits</span>
+                <span>Enrolled/Capacity</span>
+                <span>Status</span>
+              </div>
+              <div class="capacity-list capacity-table-list" id="capacityList">
+                <p class="table-empty">Loading courses...</p>
+              </div>
+            </section>
+
+            <section class="panel panel-hover">
+              <div class="panel-head"><h3>Registration Trends</h3></div>
+              <div class="chart-wrap">
+                <canvas id="adminRegTrendChart"></canvas>
+              </div>
+            </section>
           </div>
 
-          <section class="panel" data-scroll-reveal>
-            <div class="panel-head"><h3>Enrollment Capacity</h3></div>
-            <div class="capacity-list" id="capacityList">
-              <p class="table-empty">Loading courses...</p>
-            </div>
-          </section>
+          <div class="dashboard-grid dashboard-grid-bottom" data-scroll-reveal>
+            <section class="panel panel-hover">
+              <div class="panel-head"><h3>Recent Registrations</h3></div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Department</th>
+                    <th>Date Enrolled</th>
+                  </tr>
+                </thead>
+                <tbody id="recentRegsBody">
+                  <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+                </tbody>
+              </table>
+            </section>
 
-          <section class="panel" data-scroll-reveal>
-            <div class="panel-head"><h3>Recent Registrations</h3></div>
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Course</th>
-                  <th>Department</th>
-                  <th>Date Enrolled</th>
-                </tr>
-              </thead>
-              <tbody id="recentRegsBody">
-                <tr><td colspan="4" class="table-empty">Loading...</td></tr>
-              </tbody>
-            </table>
+            <section class="panel panel-hover">
+              <div class="panel-head"><h3>Enrollment by Department</h3></div>
+              <div class="chart-wrap chart-wrap-donut">
+                <canvas id="adminDeptDonutChart"></canvas>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel panel-hover" data-scroll-reveal>
+            <div class="panel-head"><h3>Post Announcement</h3></div>
+            <form id="announcementForm" class="announce-form">
+              <div class="form-field">
+                <label for="announceTitle">Title</label>
+                <input type="text" id="announceTitle" required maxlength="200"/>
+              </div>
+              <div class="form-field full">
+                <label for="announceMessage">Message</label>
+                <textarea id="announceMessage" required rows="4"></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Post</button>
+              </div>
+            </form>
           </section>
         </section>
 
@@ -662,6 +709,8 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
 
   <div id="dashToast" class="toast" role="status"></div>
 
+  <script>window.DASH_USER_ID = <?= (int) ($_SESSION['user_id'] ?? 0) ?>;</script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="../js/animations.js"></script>
   <script src="../js/dashboard.js"></script>
 
@@ -844,6 +893,225 @@ $firstName = htmlspecialchars($_SESSION['user_name'] ?? 'Admin', ENT_QUOTES, 'UT
     document.querySelector('[data-section="section-courses"]')?.click();
     setTimeout(() => document.getElementById('btnAddCourse')?.click(), 200);
   });
+  </script>
+  <script>
+  (function () {
+    let adminRegChart = null;
+    let adminDeptChart = null;
+    let courseCache = [];
+    let activeCourseFilter = 'all';
+
+    function toast(msg, isError) {
+      if (window.DashboardAPI && typeof window.DashboardAPI.showToast === 'function') {
+        window.DashboardAPI.showToast(msg, !!isError);
+        return;
+      }
+      const t = document.getElementById('dashToast');
+      if (!t) return;
+      t.textContent = msg;
+      t.className = 'toast visible' + (isError ? ' error' : '');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove('visible'), 3000);
+    }
+
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str ?? '';
+      return d.innerHTML;
+    }
+
+    function initials(name) {
+      const bits = String(name || '').trim().split(/\s+/).filter(Boolean);
+      if (!bits.length) return 'A';
+      return (bits[0].charAt(0) + (bits[1] ? bits[1].charAt(0) : '')).toUpperCase();
+    }
+
+    function statusClass(enrolled) {
+      return parseInt(enrolled, 10) > 0 ? 'active' : 'inactive';
+    }
+
+    function statusText(enrolled) {
+      return parseInt(enrolled, 10) > 0 ? 'Active' : 'Inactive';
+    }
+
+    function applyCourseFilter(rows, filter) {
+      if (filter === 'active') return rows.filter((c) => parseInt(c.enrolled, 10) > 0);
+      if (filter === 'inactive') return rows.filter((c) => parseInt(c.enrolled, 10) === 0);
+      return rows;
+    }
+
+    function renderCourseOverview() {
+      const list = document.getElementById('capacityList');
+      if (!list) return;
+      const rows = applyCourseFilter(courseCache, activeCourseFilter);
+      if (!rows.length) {
+        list.innerHTML = '<p class="table-empty">No courses found.</p>';
+        return;
+      }
+      list.innerHTML = rows.map((c) =>
+        '<div class="capacity-table-row">' +
+          '<div><strong>' + esc(c.title) + '</strong><span>' + esc(c.code) + '</span></div>' +
+          '<span>' + esc(c.department) + '</span>' +
+          '<span>' + parseInt(c.credits || 0, 10) + '</span>' +
+          '<span>' + parseInt(c.enrolled || 0, 10) + '/' + parseInt(c.capacity || 0, 10) + '</span>' +
+          '<span class="status-badge ' + statusClass(c.enrolled) + '">' + statusText(c.enrolled) + '</span>' +
+        '</div>'
+      ).join('');
+    }
+
+    async function loadCourseOverview() {
+      try {
+        const data = await fetch('../php/courses.php?action=admin').then((r) => r.json());
+        if (!data.success) return;
+        courseCache = data.courses || [];
+        renderCourseOverview();
+      } catch {}
+    }
+
+    function initOverviewTabs() {
+      const tabs = document.querySelectorAll('#courseOverviewTabs button');
+      tabs.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabs.forEach((item) => item.classList.remove('active'));
+          btn.classList.add('active');
+          activeCourseFilter = btn.dataset.filter || 'all';
+          renderCourseOverview();
+        });
+      });
+    }
+
+    function decorateRecentRows() {
+      const body = document.getElementById('recentRegsBody');
+      if (!body) return;
+      const rows = body.querySelectorAll('tr');
+      rows.forEach((row) => {
+        const first = row.children[0];
+        if (!first || first.classList.contains('table-empty') || first.dataset.decorated === '1') return;
+        const name = first.textContent.trim();
+        first.dataset.decorated = '1';
+        first.innerHTML = '<div class="recent-user"><span class="recent-avatar">' + initials(name) + '</span><span>' + esc(name) + '</span></div>';
+      });
+    }
+
+    function initOverviewCharts() {
+      if (!window.Chart) return;
+
+      const trendCanvas = document.getElementById('adminRegTrendChart');
+      if (trendCanvas) {
+        const ctx = trendCanvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+        gradient.addColorStop(0, 'rgba(78, 203, 113, .42)');
+        gradient.addColorStop(1, 'rgba(78, 203, 113, .03)');
+        if (adminRegChart) adminRegChart.destroy();
+        adminRegChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              data: [180, 240, 220, 310, 295, 360],
+              borderColor: '#4ecb71',
+              backgroundColor: gradient,
+              fill: true,
+              tension: 0.35,
+              pointRadius: 3,
+              pointHoverRadius: 4,
+              pointBackgroundColor: '#4ecb71'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: '#4e5e52' } },
+              y: { beginAtZero: true, ticks: { color: '#4e5e52' }, grid: { color: 'rgba(45,122,78,.12)' } }
+            }
+          }
+        });
+      }
+
+      const donutCanvas = document.getElementById('adminDeptDonutChart');
+      if (donutCanvas) {
+        const ctx = donutCanvas.getContext('2d');
+        if (adminDeptChart) adminDeptChart.destroy();
+        adminDeptChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Science', 'Business', 'Arts', 'Technology', 'Law', 'Hospitality'],
+            datasets: [{
+              data: [22, 19, 14, 18, 11, 9],
+              backgroundColor: ['#1a2e1e', '#2d4a32', '#2d7a4e', '#4ecb71', '#3a9e68', '#a8d5b5'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '62%',
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { boxWidth: 12, color: '#4e5e52', font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function initAnnouncementPost() {
+      const form = document.getElementById('announcementForm');
+      const titleEl = document.getElementById('announceTitle');
+      const msgEl = document.getElementById('announceMessage');
+      if (!form || !titleEl || !msgEl) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = titleEl.value.trim();
+        const message = msgEl.value.trim();
+        if (!title || !message) return;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+        try {
+          const res = await fetch('../php/announcements.php?action=create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, message, admin_id: window.DASH_USER_ID || null })
+          }).then((r) => r.json());
+          if (res.success) {
+            form.reset();
+            toast('Announcement posted successfully.');
+          } else {
+            toast(res.message || 'Could not post announcement.', true);
+          }
+        } catch {
+          toast('Could not post announcement.', true);
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initOverviewTabs();
+      initOverviewCharts();
+      initAnnouncementPost();
+      loadCourseOverview();
+      setTimeout(loadCourseOverview, 700);
+
+      const regsBody = document.getElementById('recentRegsBody');
+      if (regsBody) {
+        new MutationObserver(decorateRecentRows).observe(regsBody, { childList: true, subtree: true });
+      }
+      decorateRecentRows();
+      document.querySelector('[data-section="section-overview"]')?.addEventListener('click', () => {
+        setTimeout(() => {
+          loadCourseOverview();
+          decorateRecentRows();
+        }, 120);
+      });
+    });
+  })();
   </script>
 </body>
 </html>
