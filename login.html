@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In &mdash; Greenfield Institute</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/auth.css"/>
+</head>
+<body>
+
+  <a href="index.html" class="back-home">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Back to home
+  </a>
+
+  <div class="auth-shell">
+
+    <div class="auth-slider" id="authSlider">
+
+      <!-- LOGIN PANEL -->
+      <div class="auth-pane pane-login">
+
+        <div class="form-side">
+          <a href="index.html" class="auth-logo">
+            <img src="images/logo.png" alt="Greenfield Institute" class="auth-logo-img"/>
+          </a>
+
+          <div class="form-body">
+            <h1 class="form-title">Welcome back.</h1>
+            <p class="form-sub">Sign in to your student portal</p>
+
+            <form class="auth-form" id="loginForm" action="php/login.php" method="POST" novalidate>
+
+              <div class="field-group">
+                <label for="loginEmail">Student Email</label>
+                <div class="field-wrap">
+                  <svg class="field-icon" viewBox="0 0 20 20" fill="none">
+                    <path d="M2.5 5.5L10 11L17.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    <rect x="1.5" y="4" width="17" height="13" rx="2.5" stroke="currentColor" stroke-width="1.4"/>
+                  </svg>
+                  <input type="email" id="loginEmail" name="email" placeholder="you@greenfield.edu" autocomplete="email" required/>
+                </div>
+                <span class="field-error" id="loginEmailErr"></span>
+              </div>
+
+              <div class="field-group">
+                <label for="loginPass">Password</label>
+                <div class="field-wrap">
+                  <svg class="field-icon" viewBox="0 0 20 20" fill="none">
+                    <rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/>
+                    <path d="M7 9V7C7 5.34 8.34 4 10 4C11.66 4 13 5.34 13 7V9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                  </svg>
+                  <input type="password" id="loginPass" name="password" placeholder="Enter your password" autocomplete="current-password" required/>
+                  <button type="button" class="toggle-pass" data-target="loginPass" aria-label="Show password">
+                    <svg class="eye-show" viewBox="0 0 20 20" fill="none"><path d="M1 10C1 10 4 4 10 4C16 4 19 10 19 10C19 10 16 16 10 16C4 16 1 10 1 10Z" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.4"/></svg>
+                    <svg class="eye-hide" viewBox="0 0 20 20" fill="none" style="display:none"><path d="M2 2L18 18M8.5 8.6C8.18 8.94 8 9.45 8 10C8 11.1 8.9 12 10 12C10.55 12 11.06 11.82 11.4 11.5M4.5 5.5C2.56 6.96 1 10 1 10C1 10 4 16 10 16C11.75 16 13.32 15.38 14.62 14.46" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M16.5 13C17.9 11.64 19 10 19 10C19 10 16 4 10 4C9.13 4 8.31 4.14 7.55 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  </button>
+                </div>
+                <span class="field-error" id="loginPassErr"></span>
+              </div>
+
+              <div class="form-row">
+                <label class="check-label">
+                  <input type="checkbox" name="remember"/>
+                  <span class="check-box"></span>
+                  Remember me
+                </label>
+                <a href="#" class="forgot-link">Forgot password?</a>
+              </div>
+
+              <div class="server-msg" id="loginServerMsg" style="display:none"></div>
+
+              <button type="submit" class="btn-submit" id="loginBtn">
+                <span class="btn-label">Sign In</span>
+                <span class="btn-spinner" style="display:none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </span>
+              </button>
+
+            </form>
+          </div>
+        </div>
+
+        <div class="image-side" style="background-image:url('images/image6.jpg')">
+          <div class="image-overlay"></div>
+          <div class="image-content">
+            <div class="image-tag">New here?</div>
+            <h2>Start your academic journey today.</h2>
+            <p>Create your student account and register for courses in minutes.</p>
+            <button class="btn-slide" id="goRegister">
+              Create Account
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="image-stats">
+            <div class="istat"><strong>1,240+</strong><span>Students</span></div>
+            <div class="istat"><strong>48</strong><span>Courses</span></div>
+            <div class="istat"><strong>98%</strong><span>Satisfaction</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- REGISTER PANEL -->
+      <div class="auth-pane pane-register">
+
+        <div class="image-side image-side-left" style="background-image:url('images/image8.jpg')">
+          <div class="image-overlay"></div>
+          <div class="image-content">
+            <div class="image-tag">Already enrolled?</div>
+            <h2>Sign back in and pick up where you left off.</h2>
+            <p>Your courses, your schedule, your progress — all waiting for you.</p>
+            <button class="btn-slide" id="goLogin">
+              Sign In
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="image-stats">
+            <div class="istat"><strong>48</strong><span>Courses</span></div>
+            <div class="istat"><strong>12</strong><span>Departments</span></div>
+            <div class="istat"><strong>Free</strong><span>To join</span></div>
+          </div>
+        </div>
+
+        <div class="form-side">
+          <a href="index.html" class="auth-logo">
+            <img src="images/logo.png" alt="Greenfield Institute" class="auth-logo-img"/>
+          </a>
+
+          <div class="form-body">
+            <h1 class="form-title">Create account.</h1>
+            <p class="form-sub">Join the Greenfield student portal</p>
+
+            <form class="auth-form" id="registerForm" action="php/register.php" method="POST" novalidate>
+
+              <div class="fields-row">
+                <div class="field-group">
+                  <label for="regFirst">First Name</label>
+                  <div class="field-wrap">
+                    <svg class="field-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 17C3 13.69 6.13 11 10 11C13.87 11 17 13.69 17 17" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                    <input type="text" id="regFirst" name="first_name" placeholder="James" autocomplete="given-name" required/>
+                  </div>
+                  <span class="field-error" id="regFirstErr"></span>
+                </div>
+                <div class="field-group">
+                  <label for="regLast">Last Name</label>
+                  <div class="field-wrap">
+                    <svg class="field-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 17C3 13.69 6.13 11 10 11C13.87 11 17 13.69 17 17" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                    <input type="text" id="regLast" name="last_name" placeholder="Mutua" autocomplete="family-name" required/>
+                  </div>
+                  <span class="field-error" id="regLastErr"></span>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="regEmail">Student Email</label>
+                <div class="field-wrap">
+                  <svg class="field-icon" viewBox="0 0 20 20" fill="none"><path d="M2.5 5.5L10 11L17.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><rect x="1.5" y="4" width="17" height="13" rx="2.5" stroke="currentColor" stroke-width="1.4"/></svg>
+                  <input type="email" id="regEmail" name="email" placeholder="you@greenfield.edu" autocomplete="email" required/>
+                </div>
+                <span class="field-error" id="regEmailErr"></span>
+              </div>
+
+              <div class="field-group">
+                <label for="regStudentId">Student ID</label>
+                <div class="field-wrap">
+                  <svg class="field-icon" viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="13" rx="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 8.5H9M5 11.5H12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="10" r="2" stroke="currentColor" stroke-width="1.3"/></svg>
+                  <input type="text" id="regStudentId" name="student_id" placeholder="SCM211-XXXX/YYYY" required/>
+                </div>
+                <span class="field-error" id="regStudentIdErr"></span>
+              </div>
+
+              <div class="field-group">
+                <label for="regPass">Password</label>
+                <div class="field-wrap">
+                  <svg class="field-icon" viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M7 9V7C7 5.34 8.34 4 10 4C11.66 4 13 5.34 13 7V9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  <input type="password" id="regPass" name="password" placeholder="Create a strong password" autocomplete="new-password" required/>
+                  <button type="button" class="toggle-pass" data-target="regPass" aria-label="Show password">
+                    <svg class="eye-show" viewBox="0 0 20 20" fill="none"><path d="M1 10C1 10 4 4 10 4C16 4 19 10 19 10C19 10 16 16 10 16C4 16 1 10 1 10Z" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.4"/></svg>
+                    <svg class="eye-hide" viewBox="0 0 20 20" fill="none" style="display:none"><path d="M2 2L18 18" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  </button>
+                </div>
+                <div class="pass-strength">
+                  <div class="ps-bar" id="psBar"></div>
+                </div>
+                <span class="field-error" id="regPassErr"></span>
+              </div>
+
+              <label class="check-label terms-check">
+                <input type="checkbox" name="terms" id="regTerms" required/>
+                <span class="check-box"></span>
+                I agree to the <a href="#" class="terms-link">Terms of Service</a>
+              </label>
+              <span class="field-error" id="regTermsErr"></span>
+
+              <div class="server-msg" id="registerServerMsg" style="display:none"></div>
+
+              <button type="submit" class="btn-submit" id="registerBtn">
+                <span class="btn-label">Create Account</span>
+                <span class="btn-spinner" style="display:none">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </span>
+              </button>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Overview &mdash; Greenfield Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+</head>
+<body class="dash-body" data-role="admin" data-admin-page="overview">
+
+  <div class="dash-layout">
+    <aside class="dash-sidebar admin-sidebar">
+      <div class="sidebar-brand">
+        <a href="../index.html">
+          <img src="../images/logo.png" alt="Greenfield Institute"/>
+        </a>
+        <p class="sidebar-role">Administration</p>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="active">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="4" rx="1.5"/><rect x="11" y="9" width="7" height="9" rx="1.5"/><rect x="2" y="12" width="7" height="6" rx="1.5"/></svg>
+          Overview
+        </a>
+        <a href="manage-courses.html">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 5h14M3 10h14M3 15h9" stroke-linecap="round"/></svg>
+          Manage Courses
+        </a>
+        <a href="registrations.html">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="4" width="14" height="13" rx="2"/><path d="M7 4V2M13 4V2M3 9h14" stroke-linecap="round"/></svg>
+          Registrations
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <span id="adminName">Admin</span>
+          <a href="../php/logout.php" class="sidebar-signout">Sign Out</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <header class="dash-topbar">
+        <div class="page-topbar" style="width:100%;margin:0;padding:0;border:none">
+          <h1>Overview</h1>
+          <p class="topbar-date" id="topbarDate"></p>
+        </div>
+      </header>
+
+      <div class="dash-content">
+        <div id="overviewError" class="section-error" hidden></div>
+
+        <div style="display:flex;justify-content:flex-end;margin-bottom:1.25rem">
+          <button type="button" class="btn-outline" id="btnExportXml">Export as XML</button>
+        </div>
+
+        <div class="admin-stats-editorial" data-scroll-reveal>
+          <article class="stat-card stat-featured">
+            <div class="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5"/></svg>
+            </div>
+            <p class="stat-label">Total Students</p>
+            <p class="stat-value" id="statStudents" data-count="0">0</p>
+          </article>
+          <div class="stat-stack">
+            <article class="stat-card stat-compact">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 5V3M16 5V3M4 11h16" stroke-linecap="round"/></svg>
+              </div>
+              <div class="stat-body">
+                <p class="stat-label">Total Courses</p>
+                <p class="stat-value" id="statCourses" data-count="0">0</p>
+              </div>
+            </article>
+            <article class="stat-card stat-compact">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M6 6h12v12H6z"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="stat-body">
+                <p class="stat-label">Registrations</p>
+                <p class="stat-value" id="statRegs" data-count="0">0</p>
+              </div>
+            </article>
+            <article class="stat-card stat-compact">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M4 18V8l8-4 8 4v10"/><path d="M9 18v-6h6v6"/></svg>
+              </div>
+              <div class="stat-body">
+                <p class="stat-label">Departments</p>
+                <p class="stat-value" id="statDepts" data-count="0">0</p>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <section class="panel" data-scroll-reveal>
+          <div class="panel-head">
+            <h3>Enrollment Capacity</h3>
+          </div>
+          <div class="capacity-list" id="capacityList">
+            <p class="table-empty">Loading courses...</p>
+          </div>
+        </section>
+
+        <section class="panel" data-scroll-reveal>
+          <div class="panel-head">
+            <h3>Recent Registrations</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Department</th>
+                <th>Date Enrolled</th>
+              </tr>
+            </thead>
+            <tbody id="recentRegsBody">
+              <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="dashToast" class="toast" role="status"></div>
+  <script src="../js/animations.js"></script>
+  <script src="../js/dashboard.js"></script>
+</body>
+</html>
